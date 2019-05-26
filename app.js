@@ -1,31 +1,37 @@
 (function() {
-  function Client() {
-    this.log = function(msg) {
+  class Client {
+    constructor() {}
+    log(msg) {
       var c = document.getElementById("console"),
         li = document.createElement("li");
       li.innerHTML = msg;
       c.appendChild(li);
       console.log(msg);
-    };
+    }
   }
 
-  function Receiver() {
-    this.data = 1;
-    c.log("Data starts off with " + this.data);
-    this.increase = function() {
+  class Receiver {
+    constructor() {
+      this.data = 1;
+      c.log("Data starts off with " + this.data);
+    }
+    increase() {
       this.data++;
       c.log("Increment. My data is now " + this.data);
-    };
-    this.decrease = function() {
+    }
+    decrease() {
       this.data--;
       c.log("Decrement. My data is now " + this.data);
-    };
+    }
   }
 
-  function Invoker() {
-    this.undoActions = [];
-    this.redoActions = [];
-    this.undo = function() {
+  class Invoker {
+    constructor() {
+      this.undoActions = [];
+      this.redoActions = [];
+    }
+
+    undo() {
       var action = this.undoActions.pop();
       if (action) {
         this.redoActions.push(action.opposite());
@@ -34,8 +40,8 @@
       } else {
         c.log("can't undo - no more actions");
       }
-    };
-    this.redo = function() {
+    }
+    redo() {
       var action = this.redoActions.pop();
       if (action) {
         this.undoActions.push(action.opposite());
@@ -44,39 +50,38 @@
       } else {
         c.log("can't redo - no more actions");
       }
-    };
-    this.call = function(action) {
+    }
+    call(action) {
       this.undoActions.push(action);
       return action.run();
-    };
-  }
-
-  function BaseCommand() {
-    this.reverse = false;
-  }
-  BaseCommand.prototype.run = function() {
-    if (!this.reverse) {
-      return this.forward();
-    } else {
-      return this.backward();
     }
-  };
-  BaseCommand.prototype.opposite = function() {
-    this.reverse = !this.reverse;
-    return this;
-  };
+  }
 
-  ExampleCommand.prototype = new BaseCommand();
-  ExampleCommand.prototype.constructor = ExampleCommand;
+  class BaseCommand {
+    constructor() {
+      this.reverse = false;
+    }
+    run() {
+      if (!this.reverse) {
+        return this.forward();
+      } else {
+        return this.backward();
+      }
+    }
+    opposite() {
+      this.reverse = !this.reverse;
+      return this;
+    }
+  }
 
-  function ExampleCommand() {}
-
-  ExampleCommand.prototype.forward = function() {
-    r.increase();
-  };
-  ExampleCommand.prototype.backward = function() {
-    r.decrease();
-  };
+  class ExampleCommand extends BaseCommand {
+    forward() {
+      r.increase();
+    }
+    backward() {
+      r.decrease();
+    }
+  }
 
   var c = new Client();
   var r = new Receiver();
